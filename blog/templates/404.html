@@ -1,0 +1,18 @@
+{% extends 'index - 副本.html' %}
+{% load staticfiles %}
+{% block content %}
+        <div class="col-sm-6 blog-main">
+        {{tips}}
+        </div><!-- /.blog-main -->
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		// window.setTimeout("window.location='http://119.29.243.188/user/'",3000); 
+		if('{{tips}}' == '大佬你还没登录。三秒后自动跳转。'){
+			window.setTimeout("window.location='{% url 'blog_login' %}'",3000);			
+		}
+ 
+	});
+</script>
+{% endblock %}

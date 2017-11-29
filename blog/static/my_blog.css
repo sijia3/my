@@ -1,0 +1,278 @@
+/*
+ * Globals
+ */
+
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  color: #555;
+  background-color: #F5F5F5;
+
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+  margin-top: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  color: #333;
+}
+
+
+/*
+ * Override Bootstrap's default container.
+ */
+
+@media (min-width: 1200px) {
+  .container {
+    width: 970px;
+  }
+  .ul_css{
+    right: 250px;
+    position: absolute;
+  }
+
+  .navbar-form button[type="submit"]{
+    top:16%;
+    right: 14px;
+    position: absolute;
+  }  
+}
+
+
+/*
+ * Masthead for nav
+ */
+
+.blog-masthead {
+  background-color: #428bca;
+  -webkit-box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+          box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+}
+
+/* Nav links */
+.blog-nav-item {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  font-weight: 500;
+  color: #cdddeb;
+}
+.blog-nav-item:hover,
+.blog-nav-item:focus {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Active state gets a caret at the bottom */
+.blog-nav .active {
+  color: #fff;
+}
+.blog-nav .active:after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  margin-left: -5px;
+  vertical-align: middle;
+  content: " ";
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid;
+  border-left: 5px solid transparent;
+}
+
+
+/*
+ * Blog name and description
+ */
+
+.blog-header {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.blog-title {
+  margin-top: 30px;
+  margin-bottom: 0;
+  font-size: 60px;
+  font-weight: normal;
+}
+.blog-description {
+  font-size: 20px;
+  color: #999;
+}
+
+
+/*
+ * Main column and sidebar layout
+ */
+
+.blog-main {
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+/* Sidebar modules for boxing content */
+.sidebar-module {
+  padding: 15px;
+  margin: 0 -15px 15px;
+}
+.sidebar-module-inset {
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+.sidebar-module-inset p:last-child,
+.sidebar-module-inset ul:last-child,
+.sidebar-module-inset ol:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Pagination */
+.pager {
+  padding-left: 30px;
+  margin-bottom: 60px;
+  text-align: left;
+}
+.pager > li > a {
+  width: 140px;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 30px;
+}
+
+
+/*
+ * Blog posts
+ */
+
+.blog-post {
+  margin-bottom: 60px;
+}
+.blog-post-title {
+  margin-bottom: 5px;
+  font-size: 40px;
+}
+.blog-post-meta {
+  margin-bottom: 20px;
+  color: #999;
+}
+
+
+/*
+ * Footer
+ */
+
+.blog-footer {
+  padding: 40px 0;
+  color: #999;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+}
+.blog-footer p:last-child {
+  margin-bottom: 0;
+}
+
+
+
+@media (max-width: 768px) {    
+/*手机 */
+      .well{
+        width: 280px;
+        padding: 30px;
+      /*330px  25px 29px 20px 14px*/
+      }
+      .form-control{
+        padding: 15px 15px; 
+      }
+      .btn-group-lg>.btn, .btn-lg {
+        padding: 10px 50px 7px 24px
+      }
+      #tips{
+        width: 280px;
+      }
+      #login_btn{
+        width: 30%;
+      }
+
+}
+
+.blog_pagination{
+    padding-top:40px;
+    padding-left: 40px;
+}
+
+.blog_pagination .blog_footer_nav{
+  padding-top: 10px;
+}
+
+.comment_botton{
+    padding-left: 0px;
+    padding-bottom: 20px;
+    margin: 10px;  
+}
+.controls{
+/*    margin:  5px 0px;  */
+    padding: 0px 0px 0px 0px;
+}
+.controls .form-actions{
+    padding-left: 280px;
+}
+
+.login_page {
+
+    padding-left: 0px;
+    padding-right: 400px;
+}
+
+/*#tag_list li{
+  float: left;
+}*/
+ul#tag_list li{
+  list-style:none; 
+  float: left;
+  margin-right: 10px;
+}
+
+div.tags_infopost{
+    margin-top: 10px;
+    border: 1px solid #e9e8e8;  
+}
+
+/*#login{
+    border: 1px solid #e9e8e8; 
+}*/
+
+button#login_btn{
+    /*float: left;*/
+ 
+    margin-top: 10px;
+    margin-left: 50px;
+    width: 40%;
+}
+
+a#reg_btn {
+    float: right;
+    /*padding-top: -16px;*/
+}
+
+div.link_login_reg{
+  /*padding:10px 10px 10px 0px;*/
+}
+
+h4#tips{
+  padding-top: 10px;
+}
+
+.ibox-content{
+  background-color: #fff;
+}
+
+a{
+  color: #337ab7;
+}

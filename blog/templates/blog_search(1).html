@@ -1,0 +1,57 @@
+{% extends 'index - 副本.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="blog-post">
+{% for blog in blogs %} 
+                  <div class="panel" id = "blog_list">
+                      <div class="panel-heading">
+                        <h3 class="panel-title"><p style="font-size: 13px;"><strong style="font-size: 20px;">{{ blog.title }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <span class="glyphicon glyphicon-time"></span>{{ blog.update_time }}</p></h3>
+                      </div>
+                      <div class="panel-body">
+                      <p class="list-group-item-heading">{{ blog.content|striptags|truncatechars:100 }}</p>
+                      </div>
+                      <a href="{%url 'detailblog' blog.id%} " class="list-group-item" target="_blank">
+                      <strong>read more</strong>
+                      
+                      </a>                    
+                  </div> 
+{% endfor%} 
+</div>
+
+          <span class="blog_footer_tip">
+              共{{pages.count}}篇博文。当前第{{blogs.number}}页，共{{pages.num_pages}}页
+          </span>
+       
+
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              <li>
+                  {% if blogs.has_previous %}
+                      <a href="?key={{key}}&page={{blogs.previous_page_number}}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                      </a>
+                  {% else %}
+                      <a href="?key={{key}}&page={{blogs.number}}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                      </a>
+                  {% endif %}
+              </li>
+
+                {% for page in pages.page_range %}
+                    <li><a href="?key={{key}}&page={{page}}">{{page}}</a></li>
+                {% endfor %}
+              <li>
+                {% if blogs.has_next %}
+                  <a href="?key={{key}}&page={{blogs.next_page_number}}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                  </a>
+                {% else %}
+                  <a href="?key={{key}}&page={{blogs.number}}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                  </a>
+                {% endif %}
+              </li>
+
+            </ul>
+          </nav>
+{% endblock %}

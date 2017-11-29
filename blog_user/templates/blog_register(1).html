@@ -1,0 +1,60 @@
+{% extends 'index - 副本.html' %}
+{% load staticfiles %}
+{% block content %}
+        <div class="col-sm-6 blog-main">
+
+          <form class="form-signin" action="" method="post" id="register_form">
+           {% csrf_token %}
+            <h2 class="form-signin-heading">正在注册！</h2>
+            <label for="inputEmail" class="sr-only">Email address</label>
+            <input type="text" id="inputText" class="form-control" placeholder="账号" required autofocus name="username">
+            
+            <input type="password" id="inputPassword" class="form-control" placeholder="密码" required name="password1">
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="再次输入密码" required name="password2">
+                        <h4 class="text-center text-danger" id="register_tips"></h4>
+            <button class="btn btn-lg btn-primary btn-block" id="register_button">注册</button>
+
+          </form>
+          
+        </div><!-- /.blog-main -->
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+     $(document).ready(function(){ 
+                  $.ajaxSetup({
+                  　　data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+                  });  
+
+                  $('#register_button').click(function(){   
+                    // 注册失败类型： 用户名被占用，密码输入不一致（可先判断）。后台出错。
+                    $.ajax({
+                        type: "POST",
+                        data: $('#register_form').serialize(),
+                        url: "{% url 'blog_register' %}",
+                        cache: false,
+                        dataType: "json",
+                        success: function(json, textStatus) {
+                          if(json['flag'] == "yes"){
+                            $('#register_tips').text('注册成功，正在为你跳转。。');
+                            window.setTimeout("window.location={% url 'index' %}",2000); 
+                          }else if(json['flag'] == "name"){
+                              //显示错误信息
+                             $('#register_tips').text('用户名被占用');
+                          }else{
+                            $('#register_tips').text('密码输入不一致');
+                          }                         
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                         $('#register_tips').text('注册出错,请稍后重试...');
+                        }
+                      }); 
+                      return false;             
+                  });  
+
+
+      });
+</script>
+
+{% endblock %}

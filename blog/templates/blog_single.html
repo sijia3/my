@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+{% load staticfiles %}
+{% load comments %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'bitbug_favicon.ico' %}">
+
+    <title>sijia3' Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'dist/css/bootstrap.min.css' %}" rel="stylesheet">
+<!-- href="{% static 'dist/css/bootstrap.min.css' %}" -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'my_blog.css' %}" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'assets/js/ie-emulation-modes-warning.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/jquery.min.js' %}"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+<!--     <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="http://sijia3.imwork.net/blog/">Home</a>
+          <a class="blog-nav-item" href="#">New features</a>
+          <a class="blog-nav-item" href="http://sijia3.imwork.net/blog/">Press</a>
+          <a class="blog-nav-item" href="#">New hires</a>
+          <a class="blog-nav-item" href="#">About</a>
+        </nav>
+      </div>
+    </div> -->
+    {% include "nav.html" %}
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title"></h1>
+     <!--    <p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>
+     -->  </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+              <div class="panel panel-success">
+                <div class="panel-heading">
+                  <h3 class="panel-title">{{ blog.title }}</h3>
+                </div>
+                <div class="panel-body">
+                  {{ blog.content|safe }}
+                </div>
+              </div>
+
+ 
+          </div><!-- /.blog-post -->
+
+          <nav>
+            <ul class="pager">
+                {% if pre_blog %}
+                    <li><a href="{%url 'detailblog' pre_blog.id%}">上一篇</a></li>
+                {% else %}
+                    <li> <a href="#">没有上一篇了</a> </li>
+                {% endif %}
+
+                {% if next_blog %}
+                    <li><a href="{%url 'detailblog' next_blog.id%}">下一篇</a></li>
+                {% else %}
+                    <li><a href="#">没有下一篇了</a> </li>
+                {% endif %}
+            </ul>
+          </nav>
+
+          {% get_comment_form for blog as blog_form %}
+            <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              评论
+            </a>
+            <br><br>
+            <div class="collapse" id="collapseExample">
+              <div class="pinglun">
+                <form id="comment_form"  class="form-horizontal" method="post">
+                    {% csrf_token %}
+                 
+                    {# 必须的字段 #}
+                    {{ blog_form.object_pk }}
+                    {{ blog_form.content_type }}
+                    {{ blog_form.timestamp }}
+                    {{ blog_form.site }}
+                    {{ blog_form.submit_date }}
+                    {{ blog_form.security_hash }}
+                 
+                    {# 用户名字段，这个后面会修改为登录用户评论，无需填这个 #}
+                    <div class="control-group">
+                       <!-- <label class="control-label" for="id_name">名称： </label> -->
+                        <div class="controls">
+                            <input type="hidden" 
+                                   id="id_name" class="input-xlarge" name="name" 
+                                  placeholder="请输入您的用户名" 
+                                   value="{% if user %}{{user.username}}{% elseif %}游客{% endif %}" />
+                        </div>
+                   </div>
+                 
+                    {# 邮箱地址字段 #}
+                    <div class="control-group">
+      <!--                   <label class="control-label" for="id_email">邮箱： </label> -->
+                        <div class="controls">
+                            <input type="hidden" 
+                                   id="id_email" class="input-xlarge" name="email" 
+                                   placeholder="请输入您的邮箱地址" 
+                                   value="example@qq.com" />
+                        </div>
+                    </div>
+                 
+                    {# 评论内容 #}
+                    <a name="newcomment" id="newcomment"></a>
+                    <div class="control-group">
+                        <!-- <label class="control-label" for="id_comment"></label> -->
+                        <div class="controls">
+                           <textarea rows="4" cols="30" id="id_comment" class="input-xlarge comment" name="comment" placeholder="请输入评论内容"></textarea>
+                        </div>
+                    </div>                 
+                    {# 表单按钮 #}
+                    <div class="controls">
+                        <div class="form-actions">
+                            <input class="btn btn-info" id="submit_btn" type="submit" name="submit" value="提交" data-container="body"  data-toggle="popover" data-placement="bottom" data-content="请输入您的评论">
+                            <!-- <input type="hidden" name="next" value="{%url 'detailblog' blog.id%}"/> -->
+                        </div>
+                    </div>
+                 </form>
+              </div>
+              <br><br>
+            </div>
+
+
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                   <h4>评论列表</h4>
+                </div>
+                 <div class="panel-body">
+                   {% get_comment_list for blog as comments %}
+                    {% for comment in comments %}
+                        <div class="blog_comment" name="F{{comment.id}}">
+                            <p class="comment_title">
+                                #{{ comment.submit_date|date:"Y-m-d H:i"}} @ {{ comment.user_name }}：
+                           </p>
+                            <p class="comment_content">{{ comment.comment }}</p>
+                        </div>            
+                    {% empty %}
+                        <span>怎么还没有人来评论涅！</span>
+                    {% endfor %}
+               </div>
+            </div>
+
+
+
+            <!-- <p> {{user}}</p> -->
+
+           
+<!--           <form id="comment_form" 
+                class="form-horizontal" 
+               action="{% comment_form_target %}"  
+                method="post"> -->
+
+
+
+
+        </div><!-- /.blog-main -->
+
+       
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+
+
+    {% include "footer.html" %} 
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <!-- <script>window.jQuery || document.write('<script src="{% static 'assets/js/vendor/jquery.min.js' %}"><\/script>')</script> -->
+    <script src="{% static 'dist/js/bootstrap.min.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){       
+        $('#submit_btn').mouseout(function(){
+            $("[data-toggle='popover']").popover('destroy');
+            return false;
+        });
+        $('#comment_form').submit(function(){
+            // if ($("#id_name").val().length==0) {
+            //            alert("Error:请输入您的用户名");
+            //             $("#id_name").focus();
+            //             return false;
+            //     };
+            if ($("#id_comment").val().length==0){
+                $("[data-toggle='popover']").popover('show');
+                $("#id_comment").focus();
+                return false;
+                };
+
+            $.ajax({
+                type: "POST",
+                data: $('#comment_form').serialize(),
+                url: "{% comment_form_target %}",
+                cache: false,
+                dataType: "html",
+                success: function(html, textStatus) {
+                    window.location.reload();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("评论出错，" + errorThrown);
+                }
+              });     
+        return false;
+        });
+      });
+    </script>
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+
+  </body>
+</html>

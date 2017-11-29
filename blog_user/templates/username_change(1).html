@@ -1,0 +1,20 @@
+{% extends 'index - 副本.html' %}
+{% load staticfiles %}
+{% block content %}
+        <div class="col-sm-6 blog-main">
+
+          <form class="form-signin" action="" method="post">
+           {% csrf_token %}
+            <h2 class="form-signin-heading">修改用户名</h2>
+            <div class="input-group">
+              <span class="input-group-addon" id="sizing-addon2">请输入新的昵称</span>
+              <input type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2" name="username" value="{{request.user.username}}">
+            </div>
+            <br>
+            <button class="btn btn-lg btn-primary btn-block" id="show" type="submit" onClick="timedMsg()">确定修改？</button>
+            <br>   
+            <h3></h3>
+
+          </form>
+        </div><!-- /.blog-main -->
+{% endblock %}

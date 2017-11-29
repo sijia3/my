@@ -1,0 +1,19 @@
+{% extends 'index - 副本.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">我的信息</div>
+  <div class="panel-body">
+    用户名：{{request.user.username}}  <br><br>
+    用户头像：<img src="{{user_image}}" /><br><br>
+    <a href="{% url 'name_change' %}">修改昵称 </a>
+    <a href="{% url 'password_change' %}">修改密码 </a>
+    <!-- <a href="{% url 'password_change' %}">修改头像 </a>     -->
+    <br><br>
+    最近登录：{{request.user.last_login}} 
+    <br><br>
+    注册日期：{{request.user.data_joined}}
+
+  </div>
+</div> 
+{% endblock %}

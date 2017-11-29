@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="baidu-site-verification" content="WBtoVaSoBm" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'bitbug_favicon.ico' %}">
+    <title>sijia3' Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'dist/css/bootstrap.min.css' %}" rel="stylesheet">
+<!-- href="{% static 'dist/css/bootstrap.min.css' %}" -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'my_blog.css' %}" rel="stylesheet">
+    <!-- <link href="{% static 'assets/css/myblog.css' %}" rel="stylesheet"> -->
+    <!-- <link href="{% static 'style.css' %}" rel="stylesheet"> -->
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'assets/js/ie-emulation-modes-warning.js' %}"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- <script type="text/javascript" src="{% static 'js/cufon-yui.js' %}"></script> -->
+    <script src="{% static 'assets/js/vendor/jquery.min.js' %}"></script>
+
+    <!-- <script type="text/javascript" src="{% static 'js/content.min.js' %}"></script> -->
+<!--     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.min.css' %}" rel="stylesheet"> -->
+{% block head %}
+{% endblock %}
+  </head>
+
+  <body class="">
+
+    <nav class="navbar navbar-default ">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://119.29.243.188/blog">sijia3'博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class=""><a href="{% url 'index' %}">blog <span class="sr-only">(current)</span></a></li>
+              {% if request.user.is_authenticated %}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ request.user }} <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{% url 'user_imfor' %}">用户中心</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="{% url 'blog_login_out' %}">退出</a></li>
+                  </ul>
+                </li>
+              {% else %}
+                <!-- <li class=""><a href="{% url 'blog_login' %}">登录/注册</a></li>     -->
+                  <li> <a role="button" data-toggle="collapse" href="#blog_log" aria-expanded="false" aria-controls="blog_login">登录/注册
+                    </a></li>  
+              {% endif %}  
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">    
+            <form class="navbar-form" action="{% url 'search' %}">
+              <div class="form-group">
+                <input type="text" class="form-control" name="key" placeholder="搜索标题">
+              </div>
+              <button type="submit" class="btn btn-default">
+              <span class="glyphicon glyphicon-search"></span>
+              </button>
+            </form>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+      <div class="row">          
+        <div class="col-sm-8 blog-main">
+            <div class="collapse" id="blog_log">
+                          <div class="blog-main login_page">
+                            <form class="form-signin well" id="login" method="GET" action="{% url 'index' %}">
+                             {% csrf_token %}
+                              <label for="inputEmail" class="sr-only">Email address</label>
+                              <input type="text" id="inputText" class="form-control" placeholder="账号" required autofocus name="username">
+                              <label for="inputPassword" class="sr-only">Password</label>
+                              <input type="password" id="inputPassword" class="form-control" placeholder="密码" required name="password">
+                              <!-- <span class="tip-text"></span> -->
+
+                            <div class="link_login_reg">
+                                <button class="btn btn-lg btn-primary btn-block" id="login_btn" type="submit">登录</button>
+                              <a href="{% url 'blog_register' %}" id="reg_btn">
+                               <!--  <button class="btn btn-lg btn-primary btn-block form-signin" id="reg_btn"> -->
+                                  注册!
+                                <!-- </button> -->
+                              </a>
+                            </div>    
+                            </form>
+                             <h4 class="text-center text-danger" id="tips"></h4>
+                          </div><!-- /.blog-main -->
+            </div>   
+{% block content %}
+
+            <div class="blog-post">
+                  <div class="list-group tags_infopost">
+                      <div class="input-group">
+                        <form id="filter_form" method="GET" action="{% url 'index' %}">
+                            <ul style="overflow: hidden; padding-left: 10px;" id="tag_list">
+                                <li>标签查询：</li>
+                                {% for tag in tags %}
+                                <li >
+                                    <input id="tag_{{tag.id}}" type="checkbox" name="tag" value="{{tag.id}}" {% if tag.check %} checked {% endif %} />
+                                    <label for="tag_{{tag.id}}">{{tag.tag_name}}({{tag.num}})</label>
+                                </li>
+                                {% endfor %}  
+                            </ul>           
+                        </form>          
+                      </div>               
+                  </div>
+
+{% for blog in blogs %} 
+                  <div class="panel" id = "blog_list">
+                      <div class="panel-heading">
+                        <h3 class="panel-title"><p style="font-size: 13px;"><strong style="font-size: 20px;">{{ blog.title }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <span class="glyphicon glyphicon-time"></span>{{ blog.update_time }}</p></h3>
+                      </div>
+                      <div class="panel-body">
+                      <p class="list-group-item-heading">{{ blog.content|striptags|truncatechars:100 }}</p>
+                      </div>
+                      <a href="{%url 'detailblog' blog.id%} " class="list-group-item" target="_blank">
+                      <strong>read more</strong>
+                      
+                      </a>                    
+                  </div> 
+{% endfor%} 
+
+              </div><!-- /.blog-post -->
+
+              <span class="blog_footer_tip">
+                  共{{pages.count}}篇博文。当前第{{blogs.number}}页，共{{pages.num_pages}}页
+              </span>
+              <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                      <li>
+                      {% block paginator %}
+                      <li>
+                          {% if blogs.has_previous %}
+                            <a href="?{% if tag_list %}{% for i in tag_list %}tag={{i}}&{% endfor %}{% endif %}page={{blogs.previous_page_number}}" aria-label="Previous">
+                                  <span aria-hidden="true">&laquo;</span>
+                              </a>
+                          {% else %}
+                              <a href="?{% if tag_list %}{% for i in tag_list %}tag={{i}}&{% endfor %}{% endif %}page={{blogs.number}}" aria-label="Previous">
+                                  <span aria-hidden="true">&laquo;</span>
+                              </a>
+                          {% endif %}
+                      </li>
+
+                    {% for page in pages.page_range_ex %}
+                        {% if page == '...' %}
+                          <li><span>...</span></li>
+                        {% else %}
+                          <li><a href="?{% if tag_list %}{% for i in tag_list %}tag={{i}}&{% endfor %}{% endif %}page={{page}}">{{page}}</a></li>
+                        {% endif %}
+                        
+                    {% endfor %}
+                    <li>
+                      {% if blogs.has_next %}
+                        <a href="?{% if tag_list %}{% for i in tag_list %}tag={{i}}&{% endfor %}{% endif %}page={{blogs.next_page_number}}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      {% else %}
+                        <a href="?{% if tag_list %}{% for i in tag_list %}tag={{i}}&{% endfor %}{% endif %}page={{blogs.number}}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      {% endif %}
+
+                      {% endblock %}
+                    </li>
+
+                        </ul>
+              </nav>
+{% endblock %}
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>sijia3'qq:<em>979337189</em> </p>
+          </div>
+          <div class="sidebar-module">
+            <h4>标签</h4>
+            <ol class="list-unstyled">
+              {% for tag in tags %}
+                <li><a href="http://119.29.243.188/blog/?tag={{tag.id}}">{{tag.tag_name}}({{tag.num}})</a></li>
+              {% endfor %}
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              <li><a href="http://yshblog.com" target="_blank">杨仕航的博客</a></li>
+              <li><a href="http://www.xiaobaiwenjia.com/">小白文佳的博客</a></li>
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <footer class="blog-footer">
+      <p>Blog template built for <a href="#">35</a> by <a href="#">@sijia3</a>.</p>
+      <p>
+        <a href="">Back to top</a>
+      </p>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script>window.jQuery || document.write('<script src="{% static 'assets/js/vendor/jquery.min.js' %}"><\/script>')</script>
+    <script src="{% static 'dist/js/bootstrap.min.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+    <!-- {#设置凸显当前的页码#} -->
+    <script type="text/javascript">
+        // $(".pagination li:eq({{blogs.number}})").addClass("active");
+        $(".pagination li a").each(function(){
+            if($(this).text()=="{{blogs.number}}"){
+                $(this).parent().addClass("active");
+            }
+        });
+
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function(){ 
+            $(".aaaa a").each(function(){
+                // $(this).attr('href',window.location.href+"&page="+$(this).text());
+            });
+            $.ajaxSetup({
+            　　data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });             
+            $('#submit_btn').mouseout(function(){
+                $("[data-toggle='popover']").popover('destroy');
+                return false;
+            });
+       //comment_form
+              $('#login_btn').click(function(){
+                $('.tip-text').text('登录中...');
+                $.ajax({
+                    type: "POST",
+                    data: $('#login').serialize(),
+                    url: "{% url 'blog_login_ajax' %}",
+                    cache: false,
+                    dataType: "json",
+                    success: function(json, textStatus) {
+                      if(json['flag']){
+                          $('#tips').text('登录成功,等待跳转。。');
+                          window.setTimeout("window.location={% url 'index' %}",2000); 
+                      }else{
+                          //显示错误信息
+                          $('#tips').text('密码或账号出错');
+                      }                          
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $('#tips').text('登录出错,请稍后重试...');
+                    }
+                  });  
+                  return false            
+              }); 
+              $('#filter_form input[name=tag]').each(function(){
+                 $(this).change(function(){
+                    $('#filter_form').submit();
+                });
+              });
+                  var i = 0;
+              $("div #blog_list").each(function(){
+                  var color = ["panel-default","panel-success","panel-info","panel-warning","panel-danger"];
+                  // alert(cllor[i]);
+                  $(this).addClass(color[i]);
+                  if (i == 4) {
+                    i = 0;
+                  }else{
+                    i = (i%4)+1;
+                  }
+              });
+
+        });
+
+    </script>
+{% block script %}
+{% endblock %}
+  </body>
+
+</html>

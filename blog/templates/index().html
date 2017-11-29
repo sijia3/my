@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'bitbug_favicon.ico' %}">
+
+    <title>sijia3' Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'dist/css/bootstrap.min.css' %}" rel="stylesheet">
+<!-- href="{% static 'dist/css/bootstrap.min.css' %}" -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'assets/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'my_blog.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'assets/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+<!--     <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="http://sijia3.imwork.net/blog/">Home</a>
+          <a class="blog-nav-item" href="#">New features</a>
+          <a class="blog-nav-item" href="http://sijia3.imwork.net/blog/">Press</a>
+          <a class="blog-nav-item" href="#">New hires</a>
+          <a class="blog-nav-item" href="#">About</a>
+        </nav>
+      </div>
+    </div> -->
+    {% include "nav.html" %}
+
+    <div class="container">
+
+      <div class="blog-header">
+        <h1 class="blog-title"></h1>
+       <!--  <p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p> -->
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+              <div class="list-group">
+                  {% for blog in blogs %}
+                      <a href="{%url 'detailblog' blog.id%} " class="list-group-item" target="_blank">
+                      <h2>{{ blog.title }}</h2>
+                      <h4 class="list-group-item-heading">{{ blog.timestamp }}</h4>
+                      <p class="list-group-item-text">{{ blog.content }}</p>
+                      </a>
+                  {% endfor%}
+              </div>
+             <!--  <div class="list-group">
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+              </div> -->
+ 
+          </div><!-- /.blog-post -->
+
+          <span class="blog_footer_tip">
+              共{{pages.count}}篇博文。当前第{{blogs.number}}页，共{{pages.num_pages}}页
+          </span>
+       
+
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+          <li>
+          {% block paginator %}
+              {% if blogs.has_previous %}
+                <a href="?{% if current_tag %}tag={{current_tag}}&{% endif %}page={{blogs.previous_page_number}}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                  </a>
+              {% else %}
+                  <a href="?{% if current_tag %}tag={{current_tag}}&{% endif %}page={{blogs.number}}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                  </a>
+              {% endif %}
+          </li>
+
+        {% for page in pages.page_range_ex %}
+            {% if page == '...' %}
+              <li><span>...</span></li>
+            {% else %}
+              <li><a href="?{% if current_tag %}tag={{current_tag}}&{% endif %}page={{page}}">{{page}}</a></li>
+            {% endif %}
+            
+        {% endfor %}
+        <li>
+          {% if blogs.has_next %}
+            <a href="?{% if current_tag %}tag={{current_tag}}&{% endif %}page={{blogs.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+          {% else %}
+            <a href="?{% if current_tag %}tag={{current_tag}}&{% endif %}&page={{blogs.number}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+          {% endif %}
+
+          {% endblock %}
+        </li>
+
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>sijia3'qq:<em>979337189</em> </p>
+          </div>
+          <div class="sidebar-module">
+            <h4>标签</h4>
+            <ol class="list-unstyled">
+              {% for tag in tags %}
+                <li><a href="http://sijia3.imwork.net/blog/?tag={{tag.id}}">{{tag.tag_name}}({{tag.num}})</a></li>
+              {% endfor %}
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              <li><a href="http://yshblog.com" target="_blank">杨仕航的博客</a></li>
+              <li><a href="#">Twitter</a></li>
+              <li><a href="#">Facebook</a></li>
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <footer class="blog-footer">
+      <p>Blog template built for <a href="#">35</a> by <a href="#">@sijia3</a>.</p>
+      <p>
+        <a href="">Back to top</a>
+      </p>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script>window.jQuery || document.write('<script src="{% static 'assets/js/vendor/jquery.min.js' %}"><\/script>')</script>
+    <script src="{% static 'dist/js/bootstrap.min.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'assets/js/ie10-viewport-bug-workaround.js' %}"></script>
+    <!-- {#设置凸显当前的页码#} -->
+    <script type="text/javascript">
+        // $(".pagination li:eq({{blogs.number}})").addClass("active");
+        $(".pagination li a").each(function(){
+            if($(this).text()=="{{blogs.number}}"){
+                $(this).parent().addClass("active");
+            }
+        });
+
+    </script>
+
+  </body>
+</html>

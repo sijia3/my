@@ -1,0 +1,180 @@
+{% extends 'index - 副本.html' %}
+{% load staticfiles %}
+{% load comments %}
+{% block content %}
+<div class="panel panel-success" id = "blog_list">
+    <div class="panel-heading">
+      <h3 class="panel-title"><p style="font-size: 13px;"><strong style="font-size: 20px;">{{ blog.title }}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     <br><br><span class="glyphicon glyphicon-time"></span>{{ blog.update_time }}</p></h3>
+    </div>
+    <div class="panel-body">
+    <p class="list-group-item-heading">{{ blog.content|safe }}</p>
+    </div>
+    <div class="panel-footer ">    <p class="sb_menu">Tagged: 
+        {% for tag in tagged %}
+                <a href="http://119.29.243.188/blog/?tag={{tag.id}}">{{tag.tag_name}}&nbsp&nbsp</a>
+        {% endfor %}
+    </p>
+    </div>
+
+           
+</div>
+
+<!-- <div class="blog-post">
+  <div class="article" id="article">
+    <h2><strong>{{ blog.title }}</strong> </h2><div class="clr"></div>
+    <p>Posted by <a href="#">Owner &nbsp&nbsp&nbsp&nbsp</a> <strong> {{ blog.publish_time }}编辑</strong></p>
+    {{ blog.content|safe }}
+    <br><br><br>
+    <p class="sb_menu">Tagged: 
+        {% for tag in tagged %}
+                <a href="http://119.29.243.188/blog/?tag={{tag.id}}">{{tag.tag_name}}&nbsp&nbsp</a>
+        {% endfor %}
+    </p>
+  </div>
+</div> -->
+<nav>
+  <ul class="pager">
+      {% if pre_blog %}
+          <li><a href="{%url 'detailblog' pre_blog.id%}">上一篇:{{pre_blog_abstract}}</a></li>
+      {% else %}
+          <li><a href="#">#</a></li>
+      {% endif %}
+      {% if next_blog %}
+          <li><a href="{%url 'detailblog' next_blog.id%}">下一篇:{{next_blog_abstract}}</a></li>
+      {% else %}
+          <li>  <a href="#">#</a></li>
+      {% endif %}
+  </ul>
+</nav>
+
+
+
+      {% get_comment_form for blog as blog_form %}
+      <div class="comment_botton">
+            <a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              评论
+            </a>
+      </div>
+            <div class="collapse" id="collapseExample">
+              <div class="pinglun">
+                <form id="comment_form"  class="form-horizontal" method="post">
+                    {% csrf_token %}   
+                    {# 必须的字段 #}
+                    {{ blog_form.object_pk }}
+                    {{ blog_form.content_type }}
+                    {{ blog_form.timestamp }}
+                    {{ blog_form.site }}
+                    {{ blog_form.submit_date }}
+                    {{ blog_form.security_hash }}
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="hidden" 
+                                   id="id_name" class="input-xlarge" name="name" 
+                                   value="{% if flag %} {{user.username}} {% else %}游客{% endif %}" />   
+                                   
+                                   
+                        </div>
+                   </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="hidden" 
+                                   id="id_email" class="input-xlarge" name="email" 
+                                   value="example@qq.com" />
+                        </div>
+                    </div>
+                    <a name="newcomment" id="newcomment"></a>
+                    <div class="control-group">
+                        <!-- <label class="control-label" for="id_comment"></label> -->
+                        <div class="controls">
+                           <textarea rows="4" cols="30" id="id_comment" class="input-xlarge comment" name="comment" placeholder="请输入评论内容"></textarea>
+                        </div>
+                    </div>                 
+                    {# 表单按钮 #}
+                      <div class="controls">
+                        <div class="form-actions">
+                            <input class="btn btn-info" id="submit_btn" type="submit" name="submit" value="提交" data-container="body"  data-toggle="popover" data-placement="bottom" data-content="请输入您的评论">
+                            <!-- <input type="hidden" name="next" value="{%url 'detailblog' blog.id%}"/> -->
+                        </div>
+                    </div>
+                 </form>
+              </div>
+              <br><br>
+            </div>
+          
+        <div class="article">
+            <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <h2><span></span> Responses</h2>
+                        </div>
+                  {% get_comment_list for blog as comments %}
+                    {% for comment in comments %}
+                  <div class="comment">
+
+                    <p><a href="#"><img src="{% static 'images/userpic.gif' %}" width="40" height="40" alt="user" class="userpic" /></a>{{ comment.submit_date|date:"Y-m-d H:i"}}<a href="#"> @ {{ comment.user_name }}</a> Says:<br /></p>
+                    <p>{{ comment.comment }}</p>
+                  </div>
+                    {% empty %}
+                        <br><span>怎么还没有人来评论涅！</span><br><br>
+                    {% endfor %}
+           </div>
+        </div>
+<!-- <script type="text/javascript">
+        $('#comment_form').submit(function(){
+            // if ($("#id_name").val().length==0) {
+            //            alert("Error:请输入您的用户名");
+            //             $("#id_name").focus();
+            //             return false;
+            //     };
+            if ($("#id_comment").val().length==0){
+                $("[data-toggle='popover']").popover('show');
+                $("#id_comment").focus();
+                return false;
+                };
+
+            $.ajax({
+                type: "POST",
+                data: $('#comment_form').serialize(),
+                url: "{% comment_form_target %}",
+                cache: false,
+                dataType: "html",
+                success: function(html, textStatus) {
+                    window.location.reload();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("评论出错，" + errorThrown);
+                }
+              });     
+        return false;
+        });
+</script> -->
+
+{% endblock %}
+
+
+{% block script %}
+<script type="text/javascript">
+            $('#comment_form').submit(function(){
+                if ($("#id_comment").val().length==0){
+                    $("[data-toggle='popover']").popover('show');
+                    $("#id_comment").focus();
+                    return false;
+                    };
+
+                $.ajax({
+                    type: "POST",
+                    data: $('#comment_form').serialize(),
+                    url: "{% comment_form_target %}",
+                    cache: false,
+                    dataType: "html",
+                    success: function(html, textStatus) {
+                        // alert('评论成功')
+                        window.location.reload();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("评论出错，" + errorThrown);
+                    }
+                  });     
+            return false;
+            });         //comment_form
+</script>
+{% endblock %}
