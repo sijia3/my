@@ -11,13 +11,14 @@ import requests
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+
 def login_user(request):
     if request.method == 'POST':
         global user, pw
         user = str(request.POST.get('user'))        # 只能用一次，，，如何解决
         pw = str(request.POST.get('pw'))
         try :
-            R = requests.get('http://100.fosu.edu.cn/default2.aspx')
+            # R = requests.get('https://vpn.fosu.edu.cn:8080/default2.aspx')
             if not fosu100net.check_is_login(user, pw):
                 return render(request, 'login.html', {"error" : "账号或密码出错，请重新输入!!"})
             return HttpResponseRedirect('/grade/'+user)        # 重定向到成绩显示页面

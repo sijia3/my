@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^comments/', include('django_comments.urls')),
 
     url(r'^ueditor/', include('DjangoUeditor.urls')),
-    # url(r'^media/(?P<path>.*)$', django.views.static.serve, {'document_root': my.settings.MEDIA_ROOT}),
+    url(r'^media/(?P<path>.*)$', django.views.static.serve, {'document_root': my.settings.MEDIA_ROOT}),
 
     url(r'^grade/',include('grade.url')),   # 用来查成绩
     url(r'^robot/$', make_view(robot)),   # 微信机器人

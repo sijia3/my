@@ -2,16 +2,29 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+# 禁用安全请求警告
+requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 
-class get_messages():           #得到用户所有信息的类
+class get_messages():           # 得到用户所有信息的类
     def __init__(self):
-        self.url = 'http://100.fosu.edu.cn/default2.aspx'
+        self.login_url = 'https://vpn.fosu.edu.cn:8080/default2.aspx'
+        self.vpn_url = 'https://vpn.fosu.edu.cn/por/login_psw.csp'
         self.headers = {'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36"}
+        self.s = requests.Session()
+
+    def login_vpn(self):
+        svpn_name = '20150390109'
+        svpn_password = 'xsj510211...'
+        vpn_data = {
+            "mitm_result": '',
+            "svpn_name": svpn_name,
+            "svpn_password": svpn_password,
+            }
+        self.s.post(self.vpn_url, data=vpn_data, headers=self.headers, verify=False)
 
     def post_student_massage(self, user, pw):
-        s = requests.Session()
-        r = s.get(self.url)
+        r = self.s.get(self.login_url, verify=False)
         # 使用bs获取viewstate
         soup = BeautifulSoup(r.text, 'html.parser')
         text = soup.find('form').find('input', type="hidden")
@@ -26,18 +39,19 @@ class get_messages():           #得到用户所有信息的类
             "Button1": bu,
             "CheckBox1": "on"
             }
-        s.post(self.url, data=data, headers=self.headers)
-        return s
+        self.s.post(self.login_url, data=data, headers=self.headers, verify=False)
+        return self.s
 
     def check_is_login(self,user,pw):
         # try:
+            self.login_vpn()      # 登陆vpn
             s = self.post_student_massage(user, pw)
-            cj_url = "http://100.fosu.edu.cn/xscj.aspx?xh="+user
+            cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+user
             headers = {
-                'Referer': "http://100.fosu.edu.cn/xsleft.aspx?flag=xxcx",
+                'Referer': "https://vpn.fosu.edu.cn:8080/xsleft.aspx?flag=xxcx",
                 'User-Agent':"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.113 Safari/537.36"
                 }
-            r_cj = s.get(cj_url, headers=headers)
+            r_cj = s.get(cj_url, headers=headers, verify=False)
             if r_cj.text == "<script languange='javascript'>window.parent.location='';</script>":
                 return False
             else:
@@ -46,12 +60,12 @@ class get_messages():           #得到用户所有信息的类
 
     def get_student_grade(self, user, pw):     # 进行登录的函数，爬取信息的函数
         s = self.post_student_massage(user, pw)
-        cj_url = "http://100.fosu.edu.cn/xscj.aspx?xh="+user
+        cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+user
         headers = {
-            'Referer': "http://100.fosu.edu.cn/xsleft.aspx?flag=xxcx",
+            'Referer': "https://vpn.fosu.edu.cn:8080/xsleft.aspx?flag=xxcx",
             'User-Agent':"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.113 Safari/537.36"
             }
-        r_cj = s.get(cj_url, headers=headers)
+        r_cj = s.get(cj_url, headers=headers, verify=False)
         if r_cj.text == "<script languange='javascript'>window.parent.location='';</script>":
             return False                      # 密码或账号错误时进行提示
         choice = [
@@ -88,12 +102,12 @@ class get_messages():           #得到用户所有信息的类
 
     def get_student_information(self, user, pw):
         s = self.post_student_massage(user, pw)
-        user_inf_url = "http://100.fosu.edu.cn/xstop.aspx"          # 得到学生信息
+        user_inf_url = "https://vpn.fosu.edu.cn:8080/xstop.aspx"          # 得到学生信息
         headers = {
-            'Referer' : "http://100.fosu.edu.cn/xsmainfs.aspx?xh="+user,
+            'Referer' : "https://vpn.fosu.edu.cn:8080/xsmainfs.aspx?xh="+user,
             'User-Agent':"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.113 Safari/537.36"
             }
-        r_cj = s.get(user_inf_url, headers=headers)
+        r_cj = s.get(user_inf_url, headers=headers, verify=False)
         # print r_cj.text
         xm = r'<span id="lbXM">(.*?)</span>'
         zy = r'<span id="lbBJMC">(.*?)</span>'
