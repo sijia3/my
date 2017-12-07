@@ -141,6 +141,7 @@
               }
           });
           if('{{flag}}' == 'False'){
+              alert("{{flag}}");
               $('.tab-content').append("登录超时，请重新登录哈！");
               window.setTimeout("window.location='{% url 'grade_login' %}'",3000); 
           }

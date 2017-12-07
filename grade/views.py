@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response
 from login import fosu100net
 # Create your views here.5555qq
 import sys
-import requests
+
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -18,19 +18,19 @@ def login_user(request):
         user = str(request.POST.get('user'))        # 只能用一次，，，如何解决
         pw = str(request.POST.get('pw'))
         try :
-            # R = requests.get('https://vpn.fosu.edu.cn:8080/default2.aspx')
-            if not fosu100net.check_is_login(user, pw):
+            if fosu100net.check_is_login(user, pw):
+                return HttpResponseRedirect('/grade/'+user)        # 重定向到成绩显示页面
+            else:
                 return render(request, 'login.html', {"error" : "账号或密码出错，请重新输入!!"})
-            return HttpResponseRedirect('/grade/'+user)        # 重定向到成绩显示页面
         except:
             return render(request, 'login.html', {"error" : "嘻嘻100网炸了!!"})
-
     return render(request, 'login.html')
 # YEHL1426468134
 
 
 def cj(request):
-    try:
+    # NameError
+    try :
         data = dict()
         data['grade_list'], data['xuefenji'] = fosu100net.get_student_grade(user, pw)                # 学生成绩的所有信息
         data['user_information'] = fosu100net.get_student_information(user, pw)    # 学生个人信息
@@ -39,8 +39,7 @@ def cj(request):
         print "\n"
         if not data['grade_list']:
             data['empty'] = "你大概还是新生吧，还没查到任何成绩哈！"
-
         return render(request, 'cj.html', data)
-    except:
+    except NameError:
         data['flag'] = False
         return render(request, 'cj.html', data)
