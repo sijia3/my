@@ -32,14 +32,14 @@ def cj(request):
     # NameError
     try :
         data = dict()
-        data['grade_list'], data['xuefenji'] = fosu100net.get_student_grade(user, pw)                # 学生成绩的所有信息
-        data['user_information'] = fosu100net.get_student_information(user, pw)    # 学生个人信息
+        data['grade_list'], data['xuefenji'] = fosu100net.get_student_grade()                # 学生成绩的所有信息
+        data['user_information'] = fosu100net.get_student_information()    # 学生个人信息
         for i in data['user_information'].values():
             print i,
         print "\n"
         if not data['grade_list']:
             data['empty'] = "你大概还是新生吧，还没查到任何成绩哈！"
         return render(request, 'cj.html', data)
-    except NameError:
+    except:
         data['flag'] = False
         return render(request, 'cj.html', data)

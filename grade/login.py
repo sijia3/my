@@ -10,64 +10,54 @@ class get_messages():           # 得到用户所有信息的类
     def __init__(self):
         self.login_url = 'https://vpn.fosu.edu.cn:8080/default2.aspx'
         self.vpn_url = 'https://vpn.fosu.edu.cn/por/login_psw.csp'
+        self.user_inf_url = "https://vpn.fosu.edu.cn:8080/xstop.aspx"          # 得到学生信息
         self.headers = {'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36"}
-        self.s = requests.Session()
+        self.session = requests.Session()
+        self.svpn_name = '20150390109'
+        self.svpn_password = 'xsj510211...'
+        self.user = ''
+        self.pw = ''
 
     def login_vpn(self):
-        svpn_name = '20150390109'
-        svpn_password = 'xsj510211...'
         vpn_data = {
             "mitm_result": '',
-            "svpn_name": svpn_name,
-            "svpn_password": svpn_password,
+            "svpn_name": self.svpn_name,
+            "svpn_password": self.svpn_password,
             }
-        self.s.post(self.vpn_url, data=vpn_data, headers=self.headers, verify=False)
+        self.session.post(self.vpn_url, data=vpn_data, headers=self.headers, verify=False)
 
-    def post_student_massage(self, user, pw):
-        r = self.s.get(self.login_url, verify=False)
-        # 使用bs获取viewstate
-        soup = BeautifulSoup(r.text, 'html.parser')
+    def post_student_massage(self):
+        r = self.session.get(self.login_url, verify=False)
+        soup = BeautifulSoup(r.text, 'html.parser')           # 使用bs获取viewstate
         text = soup.find('form').find('input', type="hidden")
-        # 构建上传数据
-        rb = u"学生".encode('gb2312', 'replace')
+        rb = u"学生".encode('gb2312', 'replace')             # 构建上传数据
         bu = u"登录".encode('gb2312', 'replace')
         data = {
             "__VIEWSTATE": text['value'],
-            "yh": user,
-            "kl": pw,
+            "yh": self.user,
+            "kl": self.pw,
             "RadioButtonList1": rb,
             "Button1": bu,
             "CheckBox1": "on"
             }
-        self.s.post(self.login_url, data=data, headers=self.headers, verify=False)
-        return self.s
+        self.session.post(self.login_url, data=data, headers=self.headers, verify=False)
+        return self.session
 
     def check_is_login(self,user,pw):
-        # try:
-            self.login_vpn()      # 登陆vpn
-            s = self.post_student_massage(user, pw)
-            cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+user
-            headers = {
-                'Referer': "https://vpn.fosu.edu.cn:8080/xsleft.aspx?flag=xxcx",
-                'User-Agent':"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.113 Safari/537.36"
-                }
-            r_cj = s.get(cj_url, headers=headers, verify=False)
-            if r_cj.text == "<script languange='javascript'>window.parent.location='';</script>":
-                return False
-            else:
-                return True
-
-
-    def get_student_grade(self, user, pw):     # 进行登录的函数，爬取信息的函数
-        s = self.post_student_massage(user, pw)
-        cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+user
-        headers = {
-            'Referer': "https://vpn.fosu.edu.cn:8080/xsleft.aspx?flag=xxcx",
-            'User-Agent':"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.113 Safari/537.36"
-            }
-        r_cj = s.get(cj_url, headers=headers, verify=False)
+        self.user = user     # 保存数据于self
+        self.pw = pw
+        self.login_vpn()      # 登陆vpn
+        s = self.post_student_massage()
+        cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+self.user
+        r_cj = s.get(cj_url, headers=self.headers, verify=False)
         if r_cj.text == "<script languange='javascript'>window.parent.location='';</script>":
-            return False                      # 密码或账号错误时进行提示
+            return False        # 密码或账号错误时进行提示
+        else:
+            return True
+
+    def get_student_grade(self):     # 进行登录的函数，爬取信息的函数
+        cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+self.user
+        r_cj = self.session.get(cj_url, headers=self.headers, verify=False)
         choice = [
             {"a": "2016-2017", "b": "2"},
             {"a": "2016-2017", "b": "1"},
@@ -94,21 +84,14 @@ class get_messages():           # 得到用户所有信息的类
             t['lists'] =[]
             for line in m_tr:
                 line = list(line)
-                s = {'km': line[0],'ps_cj': line[4],'sy_cj': line[6],'qm_cj': line[7], 'zp_cj': line[8],'xuefen': line[11]}
+                s = {'km': line[0], 'ps_cj': line[4], 'sy_cj': line[6], 'qm_cj': line[7], 'zp_cj': line[8], 'xuefen': line[11]}
                 t['lists'].append(s)
             grade_list.append(t)
             # print grade_list
         return grade_list, xuefenji[0]
 
-    def get_student_information(self, user, pw):
-        s = self.post_student_massage(user, pw)
-        user_inf_url = "https://vpn.fosu.edu.cn:8080/xstop.aspx"          # 得到学生信息
-        headers = {
-            'Referer' : "https://vpn.fosu.edu.cn:8080/xsmainfs.aspx?xh="+user,
-            'User-Agent':"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.113 Safari/537.36"
-            }
-        r_cj = s.get(user_inf_url, headers=headers, verify=False)
-        # print r_cj.text
+    def get_student_information(self):
+        r_cj = self.session.get(self.user_inf_url, headers=self.headers, verify=False)
         xm = r'<span id="lbXM">(.*?)</span>'
         zy = r'<span id="lbBJMC">(.*?)</span>'
         xh = r'<span id="lbXH">(.*?)</span>'
@@ -124,5 +107,3 @@ class get_messages():           # 得到用户所有信息的类
 
 
 fosu100net = get_messages()
-
-
