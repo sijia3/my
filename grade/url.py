@@ -4,5 +4,5 @@ import grade.views
 
 urlpatterns = [
     url(r'^$', grade.views.login_user, name='grade_login'),
-    url(r'^', grade.views.cj),          # 成绩查询登陆跳转页面
+    url(r'^', grade.views.error,name='error'),          # 以前错误跳转
 ]

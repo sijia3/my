@@ -19,11 +19,12 @@ def login_user(request):
         pw = str(request.POST.get('pw'))
         try :
             if fosu100net.check_is_login(user, pw):
-                return HttpResponseRedirect('/grade/'+user)        # 重定向到成绩显示页面
+                # return HttpResponseRedirect('/grade/'+user)        # 重定向到成绩显示页面
+                return cj(request)
             else:
                 return render(request, 'login.html', {"error" : "账号或密码出错，请重新输入!!"})
         except:
-            return render(request, 'login.html', {"error" : "嘻嘻100网炸了!!"})
+            return render(request, 'login.html', {"error" : "300网暂时登陆不了!!"})
     return render(request, 'login.html')
 # YEHL1426468134
 
@@ -36,6 +37,7 @@ def cj(request):
         data['user_information'] = fosu100net.get_student_information()    # 学生个人信息
         for i in data['user_information'].values():
             print i,
+
         print "\n"
         if not data['grade_list']:
             data['empty'] = "你大概还是新生吧，还没查到任何成绩哈！"
@@ -43,3 +45,8 @@ def cj(request):
     except:
         data['flag'] = False
         return render(request, 'cj.html', data)
+
+def error(request):
+    data = {}
+    data['flag'] = False
+    return render(request, 'cj.html', data)

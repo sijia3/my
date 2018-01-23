@@ -61,3 +61,5 @@ def get_avatar_url(self):
 
 # 动态绑定方法
 User.get_avatar_url = MethodType(get_avatar_url, None, User)
+
+

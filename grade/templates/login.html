@@ -20,7 +20,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'signin.css' %}" rel="stylesheet">
-
+    <!-- <link href="{% static 'my_blog.css' %}" rel="stylesheet"> -->
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="{% static 'assets/js/ie-emulation-modes-warning.js' %}"></script>
@@ -45,14 +45,18 @@
         <input type="password" id="inputPassword" class="form-control" placeholder="密码" required name="pw">
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="remember-me"> 记住密码
+            (本站不提供保存个人信息，请放心使用！)
           </label>
           <h4 class="text-center text-danger">{{error}}</h4>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit" id="login_100">登录</button>
       </form>
-    </div> <!-- /container -->
 
+    </div> <!-- /container -->
+    <footer class="blog-footer">
+      <p>如有疑问或改进提议，请联系微信：<a href="#"></a> <a href="#">qq-979337189</a></p>
+
+    </footer>
 
 
 

@@ -2,6 +2,8 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import time
+import datetime
 # 禁用安全请求警告
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
@@ -58,32 +60,42 @@ class get_messages():           # 得到用户所有信息的类
     def get_student_grade(self):     # 进行登录的函数，爬取信息的函数
         cj_url = "https://vpn.fosu.edu.cn:8080/xscj.aspx?xh="+self.user
         r_cj = self.session.get(cj_url, headers=self.headers, verify=False)
-        choice = [
-            {"a": "2016-2017", "b": "2"},
-            {"a": "2016-2017", "b": "1"},
-            {"a": "2015-2016", "b": "2"},
-            {"a": "2015-2016", "b": "1"},
-            {"a": "2014-2015", "b": "2"},
-            {"a": "2014-2015", "b": "1"}, ]
+        all_terms = [
+            {"y": "2017-2018", "t": "2"},
+            {"y": "2017-2018", "t": "1"},
+            {"y": "2016-2017", "t": "2"},
+            {"y": "2016-2017", "t": "1"},
+            {"y": "2015-2016", "t": "2"},
+            {"y": "2015-2016", "t": "1"},
+            {"y": "2014-2015", "t": "2"},
+            {"y": "2014-2015", "t": "1"}, ]
         grade_list = []
         pattern1 = '<span id="jqpjf">全部学期学分积\(必修,限选,毕业论文\)为：(.*?)。\(公式：学分乘以最高分数的和除以学分的和\)</span>'
         xuefenji = re.findall(pattern1, str(r_cj.text))
         # print xuefenji[0]
-        for i in choice:
-            pattern = "<td>"+i['a']+"</td><td>"+i['b']+"</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>&(.*?);</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?);</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td>"
+        choice = 0
+        for term in all_terms:
+
+            pattern = "<td>"+term['y']+"</td><td>"+term['t']+"</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>&(.*?);</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?);</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td>"
             m_tr = re.findall(pattern, r_cj.text)
             m_tr = m_tr[0:]
             if not m_tr:
-                break
+                continue
+            else:
+                choice = choice+1
             t = dict()
-            t['term'] = i['a']+"第"+i['b']+"学期"
-            if i['a'] == '2016-2017' and i['b'] == '2':
+            t['term'] = term['y']+"第"+term['t']+"学期"
+            if choice == 1:
                 t['flag'] = 'active'
             else:
                 t['flag'] = ''
             t['lists'] =[]
             for line in m_tr:
                 line = list(line)
+                # print len(line)
+                for i in range(len(line)):
+                    if line[i] == '&nbsp;':
+                        line[i] = '-'
                 s = {'km': line[0], 'ps_cj': line[4], 'sy_cj': line[6], 'qm_cj': line[7], 'zp_cj': line[8], 'xuefen': line[11]}
                 t['lists'].append(s)
             grade_list.append(t)
@@ -103,6 +115,8 @@ class get_messages():           # 得到用户所有信息的类
             'zy': zy[0],
             'xh': xh[0],
         }
+        with open('test.txt', 'a+') as f:
+            f.write(xm[0]+','+zy[0]+','+xh[0]+','+str(datetime.datetime.now())+'\n')
         return user_information
 
 

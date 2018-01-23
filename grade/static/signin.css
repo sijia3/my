@@ -4,6 +4,17 @@ body {
   background-color: #eee;
 }
 
+.blog-footer {
+  padding-top: 250px;
+  color: #999;
+  text-align: center;
+  background-color: #eee;
+  /*border-top: 1px solid #e5e5e5;*/
+}
+.blog-footer p:last-child {
+  margin-bottom: 0;
+}
+
 .form-signin {
   max-width: 330px;
   padding: 15px;

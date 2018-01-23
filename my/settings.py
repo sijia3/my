@@ -30,7 +30,7 @@ SECRET_KEY = '4g^d@lej3=5w!*7*p7%t%0f^rn-@n91^-31^q0_jtkoa+t%3lp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+# DEBUG = False
 ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'blog_user',
     'xadmin',
     'crispy_forms',
+    's_cj',
 ]
 #富文本编译器。。
 STATIC_URL = '/static/'
