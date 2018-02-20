@@ -16,7 +16,7 @@ class get_messages():           # 得到用户所有信息的类
         self.headers = {'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36"}
         self.session = requests.Session()
         self.svpn_name = '20150390109'
-        self.svpn_password = 'xsj510211...'
+        self.svpn_password = 'your_password'
         self.user = ''
         self.pw = ''
 
